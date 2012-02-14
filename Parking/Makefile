@@ -1,8 +1,8 @@
 LDFLAGS = 
 RMFLAGS = -f
-INTERFACE = Mere.h
-REALISATION = Mere.cpp
-OBJ = Mere.o
+INTERFACE = Mere.h Clavier.h
+REALISATION = Mere.cpp Clavier.cpp
+OBJ = Mere.o Clavier.o
 LIBS = /public/tp/tp-multitache/libtp.a -lncurses -ltcl
 EXE = Parking
 EFFACE = clean

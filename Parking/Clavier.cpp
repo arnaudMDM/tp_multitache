@@ -1,23 +1,20 @@
 /*************************************************************************
-                           Mere  -  description
+                           XXX  -  description
                              -------------------
     début                : XXX
     copyright            : (C) XXX par XXX
     e-mail               : XXX
 *************************************************************************/
 
-//---------- Réalisation de la tâche <Mere> (fichier Mere.cpp) ---
+//---------- Réalisation de la tâche <Clavier> (fichier Clavier.cpp) ---
 
 /////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include <stdlib.h>
 //------------------------------------------------------ Include personnel
-#include "Mere.h"
 #include "Clavier.h"
-#include "/public/tp/tp-multitache/Outils.h"
-#include "/public/tp/tp-multitache/Heure.h"
+#include "/public/tp/tp-multitache/Menu.h"
+
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
@@ -38,33 +35,26 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-int main ()
+void Commande(char code, unsigned int valeur)
+{
+	switch (code)
+	{
+	case 'e' :
+	case 'E' : exit(0);
+	break;
+	case 'p' :
+	case 'P' :
+	break;
+	}
+}
+
+void Clavier()
 // Algorithme :
 //
 {
-	InitialiserParking();
-
-	TerminerParking();
-
-	return 0;
+	for(;;)
+	{
+		Menu();
+	}
 } //----- fin de Nom
 
-void InitialiserParking()
-{
-	InitialiserApplication(XTERM);
-
-
-	if( pid_t pid = fork() == 0)
-	{
-		Clavier();
-	}
-	else
-	{
-		waitpid(pid, NULL,0);
-	}
-}
-
-void TerminerParking()
-{
-	TerminerApplication();
-}

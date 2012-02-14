@@ -6,13 +6,12 @@
     e-mail               : XXX
 *************************************************************************/
 
-//---------- Interface de la tâche <Mere> (fichier Mere.h) -------
-#if ! defined ( MERE_H )
-#define MERE_H
-
+//---------- Interface de la tâche <Clavier> (fichier Clavier.h) -------
+#if ! defined ( CLAVIER_H )
+#define CLAVIER_H
 
 //------------------------------------------------------------------------
-// Rôle de la tâche <Mere>
+// Rôle de la tâche <XXX>
 //
 //
 //------------------------------------------------------------------------
@@ -26,14 +25,14 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-// type Nom ( liste de paramètres );
+void Clavier();
 // Mode d'emploi :
 //
 // Contrat :
 //
-static void InitialiserParking();
 
-static void TerminerParking();
+//////////////////////////////////////////////////////////////////  PRIVE
 
-#endif // Mere_H
+
+#endif // XXX_H
 
