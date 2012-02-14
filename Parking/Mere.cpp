@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
 //------------------------------------------------------ Include personnel
 #include "Mere.h"
 #include "Clavier.h"
@@ -51,6 +52,13 @@ int main ()
 
 void InitialiserParking()
 {
+	struct sigaction action;
+	action.sa_handler = SIG_IGN;
+	sigemptyset (&action.sa_mask);
+	action.sa_flags = 0;
+	sigaction(SIGINT, &action, NULL);
+	sigaction(SIGUSR2, &action, NULL);
+
 	InitialiserApplication(XTERM);
 
 
