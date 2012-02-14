@@ -31,9 +31,6 @@
 //
 // Contrat :
 //
-static void InitialiserParking();
-
-static void TerminerParking();
 
 #endif // Mere_H
 
