@@ -6,6 +6,6 @@ struct t_requete{
 };
 
 struct t_voiture{
-	TypeUsager usgager;
+	TypeUsager usager;
 	int numVoiture;
 };

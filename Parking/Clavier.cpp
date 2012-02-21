@@ -61,7 +61,7 @@ void Commande(char code, unsigned int valeur)
 		{
 		case 1:{
 			voiture.numVoiture = 100;
-			voiture.usgager = PROF;
+			voiture.usager = PROF;
 			write(listeDescW[0], &voiture, sizeof(t_voiture));
 			}
 		}

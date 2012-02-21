@@ -20,6 +20,7 @@
 //------------------------------------------------------ Include personnel
 #include "Mere.h"
 #include "Clavier.h"
+#include "Porte.h"
 #include "/public/tp/tp-multitache/Outils.h"
 #include "/public/tp/tp-multitache/Heure.h"
 #include "Struct.h"
@@ -48,7 +49,7 @@ static void initialiserParking()
 	action.sa_flags = 0;
 	sigaction(SIGINT, &action, NULL);
 	sigaction(SIGUSR2, &action, NULL);
-	sigaction(SIGCHILD, &action, NULL);
+	sigaction(SIGCHLD, &action, NULL);
 
 	InitialiserApplication(XTERM);
 
@@ -66,7 +67,7 @@ static void initialiserParking()
 
 	if(fork() == 0)
 	{
-		Porte(,listeDescR[0], PROF_BLAISE_PASCAL);
+		Porte(listeDescR[0], PROF_BLAISE_PASCAL);
 	}
 	else
 	{

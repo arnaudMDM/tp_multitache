@@ -13,8 +13,10 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
-#include <set>
+#include <map>
+#include <time.h>
 
 //------------------------------------------------------ Include personnel
 #include "Porte.h"
@@ -25,12 +27,15 @@
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-
+struct t_place{
+	t_voiture voiture;
+	time_t dateArrivee;
+};
 //---------------------------------------------------- Variables statiques
 static int descR;
-static t_voiture voiture;
+static t_requete requete;
 static TypeBarriere barriere;
-static set<int> setPid;
+static map<int,t_place> listePid;
 
 //------------------------------------------------------ Fonctions privées
 //static type nom ( liste de paramètres )
@@ -55,10 +60,12 @@ static void handler(int numero)
 	{
 		exit(0);
 	}
-	if(set<int>::iterator it = setPid.find(numero) != set::end)
-	{
+	int numPlace;
+	int pid = waitpid(0,&numPlace,0);
+	map<int,t_place>::iterator it=listePid.find(pid);
+	AfficherPlace(numPlace,it->second.voiture.usager,it->second.voiture.numVoiture, it->second.dateArrivee);
+	listePid.erase(pid);
 
-	}
 
 } //----- fin de nom
 
@@ -68,6 +75,7 @@ void Porte(int uneDescR, TypeBarriere uneBarriere)
 // Algorithme :
 //
 {
+	struct t_place place;
 	for(int i=0 ; i<4 ; i++)
 	{
 		descR = uneDescR;
@@ -80,13 +88,16 @@ void Porte(int uneDescR, TypeBarriere uneBarriere)
 	sigemptyset (&action.sa_mask);
 	action.sa_flags = 0;
 	sigaction(SIGUSR2, &action, NULL);
-	sigaction(SIGCHILD, &action, NULL);
+	sigaction(SIGCHLD, &action, NULL);
 
 	for(;;)
 	{
-			if(read(descR,&voiture,sizeof(t_voiture)) != 0)
+		int pid;
+			if(read(descR,&(place.voiture),sizeof(t_voiture)) != 0)
 			{
-				setPid.insert(GarerVoiture(barriere));
+				place.dateArrivee = time(NULL);
+				pid = GarerVoiture(barriere);
+				listePid.insert(pair<int,t_place>(pid,place));
 				sleep(1);
 			}
 	}
