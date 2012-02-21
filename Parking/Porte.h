@@ -34,7 +34,7 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void Porte()
+void Porte(int uneDescR, TypeBarriere uneBarriere)
 // Algorithme :
 //
 {

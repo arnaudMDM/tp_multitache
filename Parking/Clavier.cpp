@@ -11,17 +11,19 @@
 /////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
 #include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
 //------------------------------------------------------ Include personnel
 #include "Clavier.h"
 #include "/public/tp/tp-multitache/Menu.h"
-
+#include "Struct.h"
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-
 //---------------------------------------------------- Variables statiques
-
+static t_voiture voiture;
+static int listeDescW[4];
 //------------------------------------------------------ Fonctions privées
 //static type nom ( liste de paramètres )
 // Mode d'emploi :
@@ -54,14 +56,29 @@ void Commande(char code, unsigned int valeur)
 	break;
 	case 'p' :
 	case 'P' :
+	{
+		switch(valeur)
+		{
+		case 1:{
+			voiture.numVoiture = 100;
+			voiture.usgager = PROF;
+			write(listeDescW[0], &voiture, sizeof(t_voiture));
+			}
+		}
+	}
 	break;
 	}
 }
 
-void Clavier()
+void Clavier(int uneListeDescW[4])
 // Algorithme :
 //
 {
+	for (int i=0 ; i<4 ; i++)
+	{
+		listeDescW[i] = uneListeDescW[i];
+	}
+
 	for(;;)
 	{
 		Menu();

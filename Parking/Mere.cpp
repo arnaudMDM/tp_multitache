@@ -22,19 +22,17 @@
 #include "Clavier.h"
 #include "/public/tp/tp-multitache/Outils.h"
 #include "/public/tp/tp-multitache/Heure.h"
+#include "Struct.h"
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-struct t_requete{
-	time_t dateArrivee;
-	TypeUsager usager;
-	TypeBarriere porte;
-};
+
 //---------------------------------------------------- Variables statiques
 static int idSemGeneral;
-static int listePipes[4][2];
 static int idSM;
+static int listeDescW[4];
+static int listeDescR[4];
 //------------------------------------------------------ Fonctions privées
 static void initialiserParking()
 // Mode d'emploi :
@@ -50,6 +48,7 @@ static void initialiserParking()
 	action.sa_flags = 0;
 	sigaction(SIGINT, &action, NULL);
 	sigaction(SIGUSR2, &action, NULL);
+	sigaction(SIGCHILD, &action, NULL);
 
 	InitialiserApplication(XTERM);
 
@@ -59,19 +58,26 @@ static void initialiserParking()
 	for(int i = 0; i < 4; i++)
 	{
 		pipe(desc);
-		listePipes[i][0] = desc[0];
-		listePipes[i][1] = desc[1];
+		listeDescR[i] = desc[0];
+		listeDescW[i] = desc[1];
 	}
 
 	idSM = shmget(IPC_PRIVATE, sizeof(int)+3*sizeof(t_requete), S_IRUSR | S_IWUSR );
 
-	if( pid_t pid = fork() == 0)
+	if(fork() == 0)
 	{
-		Clavier();
+		Porte(,listeDescR[0], PROF_BLAISE_PASCAL);
 	}
 	else
 	{
-		waitpid(pid, NULL,0);
+		if( pid_t pid = fork() == 0)
+		{
+			Clavier(listeDescW);
+		}
+		else
+		{
+			waitpid(pid, NULL,0);
+		}
 	}
 }
 
