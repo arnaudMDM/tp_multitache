@@ -36,6 +36,8 @@ static int listeDescW[4];
 static int listeDescR[4];
 static pid_t pidPorteBP;
 static pid_t pidClavier;
+static pid_t pidPorteA;
+static pid_t pidPorteG;
 //------------------------------------------------------ Fonctions privées
 static void initialiserParking()
 // Mode d'emploi :
@@ -69,8 +71,20 @@ static void initialiserParking()
 
 	if((pidPorteBP=fork()) == 0)
 	{
-		Porte(listeDescR[0], PROF_BLAISE_PASCAL);
+		Porte(listeDescR[0], PROF_BLAISE_PASCAL, idSM,idSemGeneral);
 	}
+
+	if((pidPorteA=fork()) == 0)
+	{
+		Porte(listeDescR[1], AUTRE_BLAISE_PASCAL, idSM,idSemGeneral);
+	}
+
+	if((pidPorteG=fork()) == 0)
+	{
+		Porte(listeDescR[2], ENTREE_GASTON_BERGER, idSM,idSemGeneral);
+	}
+
+
 
 	if( (pidClavier= fork()) == 0)
 	{
@@ -92,6 +106,8 @@ static void terminerParking()
 //
 {
 	kill(pidPorteBP,SIGUSR2);
+	kill(pidPorteA,SIGUSR2);
+	kill(pidPorteG,SIGUSR2);
 	semctl(idSemGeneral, 0, IPC_RMID, 0);
 
 	shmctl(idSM, IPC_RMID, 0);

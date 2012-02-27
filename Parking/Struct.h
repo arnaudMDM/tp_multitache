@@ -9,3 +9,8 @@ struct t_voiture{
 	TypeUsager usager;
 	int numVoiture;
 };
+
+struct t_mem{
+	int nbVoiture;
+	t_requete tabRequete[3];
+};

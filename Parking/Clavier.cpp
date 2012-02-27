@@ -15,7 +15,7 @@
 #include <unistd.h>
 //------------------------------------------------------ Include personnel
 #include "Clavier.h"
-#include "/public/tp/tp-multitache/Menu.h"e
+#include "/public/tp/tp-multitache/Menu.h"
 #include "Struct.h"
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
@@ -24,6 +24,7 @@
 //---------------------------------------------------- Variables statiques
 static t_voiture voiture;
 static int listeDescW[4];
+static int nbCompteur = 0;
 //------------------------------------------------------ Fonctions privées
 //static type nom ( liste de paramètres )
 // Mode d'emploi :
@@ -51,22 +52,52 @@ void Commande(char code, unsigned int valeur)
 {
 	switch (code)
 	{
-	case 'e' :
-	case 'E' : exit(0);
-	break;
-	case 'p' :
-	case 'P' :
-	{
-		switch(valeur)
+		case 'e' :
+		case 'E' : exit(0);
+		break;
+		case 'p' :
+		case 'P' :
 		{
-		case 1:{
-			voiture.numVoiture = 100;
 			voiture.usager = PROF;
-			write(listeDescW[0], &voiture, sizeof(t_voiture));
+			switch(valeur)
+			{
+			case 1:{
+				nbCompteur ++;
+				voiture.numVoiture = nbCompteur % 999;
+				write(listeDescW[0], &voiture, sizeof(t_voiture));
+				break;
+				}
+			case 2:{
+				nbCompteur ++;
+				voiture.numVoiture = nbCompteur % 999;
+				write(listeDescW[2], &voiture, sizeof(t_voiture));
+				break;
+				}
 			}
+			break;
 		}
-	}
-	break;
+		case 'a':
+		case 'A':
+		{
+
+			voiture.usager = AUTRE;
+			switch(valeur)
+			{
+			case 1:{
+				nbCompteur ++;
+				voiture.numVoiture = nbCompteur % 999;
+				write(listeDescW[1], &voiture, sizeof(t_voiture));
+				break;
+				}
+			case 2:{
+				nbCompteur ++;
+				voiture.numVoiture = nbCompteur % 999;
+				write(listeDescW[2], &voiture, sizeof(t_voiture));
+				break;
+				}
+			}
+			break;
+		}
 	}
 }
 

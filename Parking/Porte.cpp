@@ -18,6 +18,8 @@
 #include <map>
 #include <time.h>
 #include <fstream>
+#include <sys/shm.h>
+#include <sys/sem.h>
 
 //------------------------------------------------------ Include personnel
 #include "Porte.h"
@@ -34,8 +36,6 @@ struct t_place{
 };
 //---------------------------------------------------- Variables statiques
 static int descR;
-static t_requete requete;
-static TypeBarriere barriere;
 static map<int,t_place> listePid;
 
 //------------------------------------------------------ Fonctions privées
@@ -78,17 +78,46 @@ static void handler(int numero)
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void Porte(int uneDescR, TypeBarriere uneBarriere)
+void Porte(int uneDescR, TypeBarriere barriere, int idSM, int idSemGeneral)
 // Algorithme :
 //
 {
+
 	struct t_place place;
 	for(int i=0 ; i<4 ; i++)
 	{
 		descR = uneDescR;
 	}
 
-	barriere = uneBarriere;
+	t_mem *etatEntreeParking = (t_mem *)shmat(idSM, NULL, 0);
+
+	struct sembuf semMemPP;
+	semMemPP.sem_num = 4;
+	semMemPP.sem_op = 1;
+	semMemPP.sem_flg = 0;
+
+	struct sembuf semMemPR;
+	semMemPR.sem_num = 4;
+	semMemPR.sem_op = -1;
+	semMemPR.sem_flg = 0;
+
+	struct sembuf semSortie;
+	semSortie.sem_op = -1;
+	semSortie.sem_flg = 0;
+
+	int idPorte;
+
+	switch(barriere)
+	{
+	case PROF_BLAISE_PASCAL : idPorte = 0;
+	break;
+	case AUTRE_BLAISE_PASCAL : idPorte = 1;
+	break;
+	case ENTREE_GASTON_BERGER : idPorte = 2;
+	break;
+	}
+
+	semSortie.sem_num = idPorte;
 
 	struct sigaction action;
 	action.sa_handler = handler;
@@ -97,13 +126,33 @@ void Porte(int uneDescR, TypeBarriere uneBarriere)
 	sigaction(SIGUSR2, &action, NULL);
 	sigaction(SIGCHLD, &action, NULL);
 
+	t_requete requete;
+
 	for(;;)
 	{
 			if(read(descR,&(place.voiture),sizeof(t_voiture))!=-1)
 			{
+				DessinerVoitureBarriere(barriere,place.voiture.usager);
 				place.dateArrivee = time(NULL);
-				listePid.insert(pair<int,t_place>( GarerVoiture(barriere),place));
-				sleep(1);
+				semop(idSemGeneral,&semMemPP,1);
+				if(etatEntreeParking->nbVoiture < 8)
+				{
+					etatEntreeParking->nbVoiture += 1;
+					semop(idSemGeneral, &semMemPR,1);
+					listePid.insert(pair<int,t_place>( GarerVoiture(barriere),place));
+					sleep(1);
+				}
+				else
+				{
+					requete.dateArrivee = place.dateArrivee;
+					requete.usager = place.voiture.usager;
+					etatEntreeParking->tabRequete[idPorte] = requete;
+					AfficherRequete(barriere,requete.usager,requete.dateArrivee);
+					semop(idSemGeneral, &semMemPR,1);
+					semop(idSemGeneral,&semSortie,1);
+					listePid.insert(pair<int,t_place>( GarerVoiture(barriere),place));
+					sleep(1);
+				}
 			}
 	}
 } //----- fin de Nom
