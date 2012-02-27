@@ -34,6 +34,8 @@ static int idSemGeneral;
 static int idSM;
 static int listeDescW[4];
 static int listeDescR[4];
+static pid_t pidPorteBP;
+static pid_t pidClavier;
 //------------------------------------------------------ Fonctions privées
 static void initialiserParking()
 // Mode d'emploi :
@@ -65,21 +67,20 @@ static void initialiserParking()
 
 	idSM = shmget(IPC_PRIVATE, sizeof(int)+3*sizeof(t_requete), S_IRUSR | S_IWUSR );
 
-	if(fork() == 0)
+	if((pidPorteBP=fork()) == 0)
 	{
 		Porte(listeDescR[0], PROF_BLAISE_PASCAL);
 	}
+
+	if( (pidClavier= fork()) == 0)
+	{
+		Clavier(listeDescW);
+	}
 	else
 	{
-		if( pid_t pid = fork() == 0)
-		{
-			Clavier(listeDescW);
-		}
-		else
-		{
-			waitpid(pid, NULL,0);
-		}
+		waitpid(pidClavier, NULL,0);
 	}
+
 }
 
 static void terminerParking()
@@ -90,6 +91,7 @@ static void terminerParking()
 // Algorithme :
 //
 {
+	kill(pidPorteBP,SIGUSR2);
 	semctl(idSemGeneral, 0, IPC_RMID, 0);
 
 	shmctl(idSM, IPC_RMID, 0);

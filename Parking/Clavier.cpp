@@ -15,7 +15,7 @@
 #include <unistd.h>
 //------------------------------------------------------ Include personnel
 #include "Clavier.h"
-#include "/public/tp/tp-multitache/Menu.h"
+#include "/public/tp/tp-multitache/Menu.h"e
 #include "Struct.h"
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes

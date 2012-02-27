@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include <map>
 #include <time.h>
+#include <fstream>
 
 //------------------------------------------------------ Include personnel
 #include "Porte.h"
@@ -58,11 +59,17 @@ static void handler(int numero)
 {
 	if(numero == SIGUSR2)
 	{
+		for(map<int,t_place>::iterator i=listePid.begin() ; i!=listePid.end() ; i++)
+		{
+			kill(i->first,SIGUSR2);
+		}
 		exit(0);
 	}
 	int numPlace;
 	int pid = waitpid(0,&numPlace,0);
+	numPlace=numPlace/256;
 	map<int,t_place>::iterator it=listePid.find(pid);
+
 	AfficherPlace(numPlace,it->second.voiture.usager,it->second.voiture.numVoiture, it->second.dateArrivee);
 	listePid.erase(pid);
 
@@ -92,12 +99,10 @@ void Porte(int uneDescR, TypeBarriere uneBarriere)
 
 	for(;;)
 	{
-		int pid;
-			if(read(descR,&(place.voiture),sizeof(t_voiture)) != 0)
+			if(read(descR,&(place.voiture),sizeof(t_voiture))!=-1)
 			{
 				place.dateArrivee = time(NULL);
-				pid = GarerVoiture(barriere);
-				listePid.insert(pair<int,t_place>(pid,place));
+				listePid.insert(pair<int,t_place>( GarerVoiture(barriere),place));
 				sleep(1);
 			}
 	}
