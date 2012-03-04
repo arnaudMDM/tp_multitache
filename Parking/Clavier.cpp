@@ -26,29 +26,12 @@ static t_voiture voiture;
 static int listeDescW[4];
 static int nbCompteur = 0;
 //------------------------------------------------------ Fonctions privées
-//static type nom ( liste de paramètres )
-// Mode d'emploi :
-//
-// Contrat :
-//
-// Algorithme :
-//
-//{
-//} //----- fin de nom
-
-//static type nom ( liste de paramètres )
-// Mode d'emploi :
-//
-// Contrat :
-//
-// Algorithme :
-//
-//{
-//} //----- fin de nom
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
 void Commande(char code, unsigned int valeur)
+// Algorithme :
+//
 {
 	switch (code)
 	{
@@ -98,6 +81,14 @@ void Commande(char code, unsigned int valeur)
 			}
 			break;
 		}
+
+		case 's':
+		case 'S':
+		{
+			write(listeDescW[3],&valeur, sizeof(valeur));
+		break;
+		}
+
 	}
 }
 

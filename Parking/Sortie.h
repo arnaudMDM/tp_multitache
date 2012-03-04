@@ -1,46 +1,35 @@
 /*************************************************************************
-                           Struct  -  description
+                           XXX  -  description
                              -------------------
-    début                : Fevrier
+    début                : XXX
     copyright            : (C) XXX par XXX
     e-mail               : XXX
 *************************************************************************/
 
-//---------- Interface du module <Struct> (fichier Struct.h) ---------
-#if ! defined ( STRUCT_H )
-#define STRUCT_H
+//---------- Interface de la tâche <XXX> (fichier XXX.h) -------
+#if ! defined ( SORTIE_H )
+#define SORTIE_H
+
 //------------------------------------------------------------------------
-// Rôle du module <Struct>
-// Ce module permet de d�finir les diff�rents types utilis� par les taches
+// Rôle de la tâche <<Sortie>
+//
 //
 //------------------------------------------------------------------------
 
 /////////////////////////////////////////////////////////////////  INCLUDE
 //--------------------------------------------------- Interfaces utilisées
-#include "/public/tp/tp-multitache/Outils.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-struct t_requete{
-	time_t dateArrivee;
-	TypeUsager usager;
-};
 
-struct t_voiture{
-	TypeUsager usager;
-	int numVoiture;
-};
+//////////////////////////////////////////////////////////////////  PUBLIC
+//---------------------------------------------------- Fonctions publiques
+void Sortie(int uneDescR, key_t keySM, key_t keySem);
+// Mode d'emploi :
+//
+// Contrat :
+//
 
-struct t_place{
-	t_voiture voiture;
-	time_t dateArrivee;
-};
+#endif // SORTIE_H
 
-struct t_mem{
-	int nbVoiture;
-	t_requete tabRequete[3];
-	t_place placesParking[8];
-};
-
-#endif

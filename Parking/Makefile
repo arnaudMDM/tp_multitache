@@ -1,9 +1,12 @@
 LDFLAGS = 
 RMFLAGS = -f
-INTERFACE = Mere.h Clavier.h
-REALISATION = Mere.cpp Clavier.cpp
-OBJ = Mere.o Clavier.o
-LIBS = /public/tp/tp-multitache/libtp.a -lncurses -ltcl
+CCFLAGS = 
+INTERFACE = Mere.h Clavier.h Sortie.h Porte.h
+REALISATION = Mere.cpp Clavier.cpp Sortie.cpp Porte.cpp
+OBJ = Mere.o Clavier.o Sortie.o Porte.o
+LIBS = -ltp -lncurses -ltcl
+DIRHEAD = -I/public/tp/tp-multitache/
+DIRLIB = -L/public/tp/tp-multitache/
 EXE = Parking
 EFFACE = clean
 RM = rm
@@ -13,12 +16,12 @@ EDL = g++
 
 $(EXE) : $(OBJ)
 	$(ECHO) EDL de $(EXE)
-	$(EDL) $(LDFLAGS) $(OBJ) $(LIBS) -o $(EXE)
+	$(EDL) $(LDFLAGS) $(OBJ) $(DIRLIB) $(LIBS) -o $(EXE)
 	
 $(EFFACE):
 	$(RM) $(RMFLAGS) $(EXE) $(OBJ) core
 	
 %.o : %.cpp
 	$(ECHO) Compilation de $<
-	$(COMP) $(CCFLAGS) -c  $<
+	$(COMP) $(CCFLAGS) $(DIRHEAD) -c  $<
 	

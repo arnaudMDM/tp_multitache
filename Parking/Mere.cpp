@@ -17,10 +17,15 @@
 #include <sys/sem.h>
 #include <sys/shm.h>
 #include <signal.h>
+
+#include <sys/types.h>
+#include <sys/ipc.h>
+
 //------------------------------------------------------ Include personnel
 #include "Mere.h"
 #include "Clavier.h"
 #include "Porte.h"
+#include "Sortie.h"
 #include "/public/tp/tp-multitache/Outils.h"
 #include "/public/tp/tp-multitache/Heure.h"
 #include "Struct.h"
@@ -38,6 +43,8 @@ static pid_t pidPorteBP;
 static pid_t pidClavier;
 static pid_t pidPorteA;
 static pid_t pidPorteG;
+static pid_t pidSortie;
+static pid_t pidHeure;
 //------------------------------------------------------ Fonctions privées
 static void initialiserParking()
 // Mode d'emploi :
@@ -57,7 +64,12 @@ static void initialiserParking()
 
 	InitialiserApplication(XTERM);
 
-	idSemGeneral = semget(IPC_PRIVATE, 4, S_IRUSR | S_IWUSR);
+	key_t clePubliqueSem = ftok("/tmp",42);
+	idSemGeneral = semget(clePubliqueSem, 4, IPC_CREAT | IPC_EXCL | 0666);
+
+	int tableauIni[] = {0, 0, 0};
+	semctl(idSemGeneral, 3, SETALL,tableauIni);
+	semctl(idSemGeneral, 3, SETVAL, 1);
 
 	int desc[2];
 	for(int i = 0; i < 4; i++)
@@ -67,24 +79,31 @@ static void initialiserParking()
 		listeDescW[i] = desc[1];
 	}
 
-	idSM = shmget(IPC_PRIVATE, sizeof(int)+3*sizeof(t_requete), S_IRUSR | S_IWUSR );
+	key_t clePubliqueMem = ftok("/tmp",43);
+
+	idSM = shmget(clePubliqueMem, sizeof(int)+3*sizeof(t_requete), IPC_CREAT | IPC_EXCL | 0666);
+
+	pidHeure = ActiverHeure();
 
 	if((pidPorteBP=fork()) == 0)
 	{
-		Porte(listeDescR[0], PROF_BLAISE_PASCAL, idSM,idSemGeneral);
+		Porte(listeDescR[0], PROF_BLAISE_PASCAL, clePubliqueMem, clePubliqueSem);
 	}
 
 	if((pidPorteA=fork()) == 0)
 	{
-		Porte(listeDescR[1], AUTRE_BLAISE_PASCAL, idSM,idSemGeneral);
+		Porte(listeDescR[1], AUTRE_BLAISE_PASCAL, clePubliqueMem, clePubliqueSem);
 	}
 
 	if((pidPorteG=fork()) == 0)
 	{
-		Porte(listeDescR[2], ENTREE_GASTON_BERGER, idSM,idSemGeneral);
+		Porte(listeDescR[2], ENTREE_GASTON_BERGER, clePubliqueMem, clePubliqueSem);
 	}
 
-
+	if((pidSortie=fork()) == 0)
+	{
+		Sortie(listeDescR[3], clePubliqueMem, clePubliqueSem);
+	}
 
 	if( (pidClavier= fork()) == 0)
 	{
@@ -108,6 +127,8 @@ static void terminerParking()
 	kill(pidPorteBP,SIGUSR2);
 	kill(pidPorteA,SIGUSR2);
 	kill(pidPorteG,SIGUSR2);
+	kill(pidSortie,SIGUSR2);
+	kill(pidHeure,SIGUSR2);
 	semctl(idSemGeneral, 0, IPC_RMID, 0);
 
 	shmctl(idSM, IPC_RMID, 0);

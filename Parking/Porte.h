@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void Porte(int uneDescR, TypeBarriere uneBarriere, int idSM, int idSemGeneral);
+void Porte(int uneDescR, TypeBarriere uneBarriere, key_t keySM, key_t keySem);
 // Mode d'emploi :
 //
 // Contrat :

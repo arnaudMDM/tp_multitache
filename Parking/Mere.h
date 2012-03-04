@@ -26,11 +26,7 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-// type Nom ( liste de paramètres );
-// Mode d'emploi :
-//
-// Contrat :
-//
+void Mere();
 
 #endif // Mere_H
 
